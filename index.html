@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynthVis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <button id="play-button">Trigger</button>
+    <div class="waveform-select">Change Waveform:
+        <select id="waveform-type">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Sawtooth</option>
+        </select>
+    </div>
+
+
+    <canvas id="oscillator-view" width="600" height="200" style="border:2px solid #555; background:#000;"></canvas>
+    <br>
+
+    <script>
+        // 1. Setup the Analyser and Synth
+        const wave = new Tone.Waveform(2048); // Size of the data snapshot
+        const synth = new Tone.Synth({
+            oscillator: {type: "sine"}
+        }).connect(wave).toDestination();
+
+        const waveformSelect = document.getElementById("waveform-type");
+
+        waveformSelect.addEventListener("change", (event) => {
+            // 'event.target.value' will be "sine", "square", "triangle", or "sawtooth"
+            const newType = event.target.value;
+            
+            // Update the synth's oscillator type immediately
+            synth.oscillator.type = newType;
+            
+            console.log("Waveform changed to:", newType);
+        });
+
+        const canvas = document.getElementById("oscillator-view");
+        const ctx = canvas.getContext("2d");
+
+        // 2. The Drawing Loop
+        function draw() {
+            requestAnimationFrame(draw);
+            
+            // Get the audio data from the analyser
+            const values = wave.getValue();
+            
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.lineJoin = "round";
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#00ffcc"; // Neon Green/Blue
+
+            // Loop through the data points and draw a line
+            for (let i = 0; i < values.length; i++) {
+                const x = (i / values.length) * canvas.width;
+                const y = (0.5 + values[i] / 2) * canvas.height;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+        }
+
+        // Start the drawing loop immediately
+        draw();
+
+        let isplaying = false
+
+        // 3. Play sound on click
+        document.getElementById("play-button").addEventListener("click", async () => {
+            await Tone.start();
+
+            if(isplaying){
+                synth.triggerRelease();
+                document.getElementById("play-button").innerText = "Start";
+                isplaying = false;
+            }else {
+                synth.triggerAttack("C3");
+                document.getElementById("play-button").innerText = "Stop";
+                isplaying = true;
+            }
+        });
+    </script>
+</body>
+</html>
