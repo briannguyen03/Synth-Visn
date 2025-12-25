@@ -1,15 +1,50 @@
-body { 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items:center;
-    gap: 25px; 
-    height: 100vh; 
-    background: #222; 
-    color: white; 
-    font-family: sans-serif; 
-    margin: 0;
+#main-container {
+    display: flex;
+    flex-direction: row; 
+    align-items: flex-start; 
+    justify-content: center;
+    gap: 40px; 
+    padding: 20px;
+    width: 100%;
 }
+
+#vision-column {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#synth-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+body {
+    background: #222;
+    color: white;
+    font-family: sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#sketch-holder {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    border: 1px solid grey; 
+    padding: 10px;
+    width: 60vw;
+    max-width: 660px; 
+    min-height: 500px; 
+    display: block;
+}
+
 
 button {
     padding: 20px 40px; 
